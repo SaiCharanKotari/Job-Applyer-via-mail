@@ -1,17 +1,17 @@
 import { useState } from 'react'
 import { Routes, Route } from 'react-router-dom';
 import Home from './pages/home.jsx';
-import Login from './pages/login.jsx';
-import Signup from './pages/signup.jsx';
+import Apply from './pages/apply.jsx';
+import { Toaster } from 'react-hot-toast';
 
 function App() {
 
   return (
     <>
+      <Toaster />
       <Routes>
         <Route path='/' element={<Home />} />
-        <Route path='/login' element={<Login />} />
-        <Route path='/signup' element={<Signup />} />
+        <Route path='/apply' element={<Apply />} />
       </Routes>
     </>
   )

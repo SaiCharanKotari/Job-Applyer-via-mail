@@ -1,21 +1,37 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import Nav from '../components/navibar.jsx'
+import UserA from '../components/userA.jsx';
 
 function Home() {
-  const [mail, setMail] = useState('');
-  const [pass, setPass] = useState('');
+
+  const [width, setWidth] = useState(window.innerWidth);
+
+  useEffect(() => {
+    function handleresize() {
+      setWidth(window.innerWidth);
+    }
+    window.addEventListener("resize", handleresize);
+    return () => window.removeEventListener('resize', handleresize);
+  }, [])
+
   return (
     <>
-      <div className="flex flex-col gap-2 h-screen bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 justify-center items-center">
-        <h1 className="">hi this is home</h1>
-        <div>
-          <label for="mail">Mail : </label>
-          <input type="text" className="" value={mail} onChange={(e) => setMail(e.target.value)} placeholder="Enter Mail Here.." />
-        </div>
-        <div>
-          <label for="pass">Pass : </label>
-          <input type="text" className="" value={pass} onChange={(e) => setPass(e.target.value)} placeholder="Enter Pass Here.."></input>
-        </div>
-        {mail}
+      <div className="h-screen bg-gradient-to-br from-sky-400 via-indigo-500 to-blue-700">
+        {width > 767 ?
+          <div id="tab767" className="grid grid-cols-[30%,70%] h-full">
+            <div className="bg-slate-700 flex items-center ">
+              <p className="flex-1 text-[clamp(1.5rem,8vw,16rem)] opacity-5
+            leading-none">
+                JOB APPLYER
+              </p>
+            </div>
+            <UserA />
+          </div>
+          :
+          <div id="mobile" className="grid ">
+            <UserA />
+          </div>
+        }
       </div>
     </>);
 }
