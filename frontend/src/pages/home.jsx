@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import Nav from '../components/navibar.jsx'
+import axios from 'axios';
 import UserA from '../components/userA.jsx';
 
 function Home() {
@@ -7,6 +7,13 @@ function Home() {
   const [width, setWidth] = useState(window.innerWidth);
 
   useEffect(() => {
+    async function handleget() {
+      try {
+        await axios.get('http://localhost:5000');
+      } catch (error) {
+      }
+    }
+    handleget();
     function handleresize() {
       setWidth(window.innerWidth);
     }
