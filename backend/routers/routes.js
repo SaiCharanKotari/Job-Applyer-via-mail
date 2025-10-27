@@ -72,14 +72,25 @@ router.post('/send', auth, (req, res) => {
 router.post('/apply/:id', auth, upload.single('pdf'), async (req, res) => {
   try {
     const { id } = req.params;
-    const file = req.file;
+    const file = req.file || false;
     const { subject, message, filename } = req.body;
-    if (!file) return res.status(400).json({ success: false, message: "No file uploaded" });
-    const sql = "UPDATE users SET pdf = ?,subject= ? ,message=?,pdfname=?  WHERE id = ?";
-    db.query(sql, [file.buffer, subject, message, filename, id], (err, result) => {
-      if (err) { console.log(err); return res.status(500).json({ success: false, message: "database problem" }) };
-      res.status(201).json({ success: true, message: "File uploaded successfully!" });
-    });
+    db.query('SELECT pdf FROM users where id=?', [id], (err, result) => {
+      if (err) { return res.status(500).json({ success: false, message: "database problem" }) };
+      if (!file && (result.length === 0)) return res.status(400).json({ success: false, message: "No file uploaded" });
+    })
+    if (!file) {
+      const sql = "UPDATE users SET subject= ? ,message=?,pdfname=?  WHERE id = ?";
+      db.query(sql, [subject, message, filename, id], (err, result) => {
+        if (err) { return res.status(500).json({ success: false, message: "database problem" }) };
+        res.status(201).json({ success: true, message: "File uploaded successfully!" });
+      });
+    } else {
+      const sql = "UPDATE users SET pdf = ?,subject= ? ,message=?,pdfname=?  WHERE id = ?";
+      db.query(sql, [file.buffer, subject, message, filename, id], (err, result) => {
+        if (err) { return res.status(500).json({ success: false, message: "database problem" }) };
+        res.status(201).json({ success: true, message: "File uploaded successfully!" });
+      });
+    }
   } catch (err) {
     console.log(err);
     res.status(500).json({ success: false, message: "server problem" })
@@ -93,7 +104,6 @@ router.get('/apply', auth, async (req, res) => {
       if (err) return res.status(500).json({ success: false, message: "database problem" });
       if (result.length === 0) return res.status(404).json({ success: false, message: "Not found" });
       const data = result[0];
-      const file = data.pdf.toString('base64');
       res.status(200).json({ success: true, subject: data.subject, message: data.message, filename: data.pdfname })
     })
   } catch (err) {

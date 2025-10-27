@@ -86,7 +86,6 @@ function Apply() {
     }
   }
   async function handleSave() {
-    if (!file) { return toast.error("no file exist") };
     const formData = new FormData();
     formData.append('pdf', file);
     formData.append('subject', subject);
