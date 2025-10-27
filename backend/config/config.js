@@ -4,7 +4,8 @@ const db = sql.createConnection({
   host: '127.0.0.1',
   user: 'root',
   password: '2005',
-  database: 'mydb'
+  database: 'mydb',
+  ssl: { rejectUnauthorized: true },
 });
 
 db.connect((err) => {

@@ -16,8 +16,8 @@ app.use(express.json());
 app.use(cookie());
 app.use('/', router);
 
-mongoDB().then(() => {
-  app.listen(5000, () => {
-    console.log("this app is running on port 5000");
-  })
+
+app.listen(process.env.PORT || 10000, () => {
+  console.log("this app is running on port 5000 or some other");
 })
+
