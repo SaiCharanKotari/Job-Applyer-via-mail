@@ -4,21 +4,23 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const db = require('../config/config');
 const auth = require('../middleware/jwtauth');
-
+const multer = require('multer');
+const upload = multer({ storage: multer.memoryStorage() });
 
 router.post('/', auth, (req, res) => {
   res.json({ success: true, user: req.user });
 });
 
-router.post('/apply/:id', auth, async (req, res) => {
+router.post('/apply/:id', auth, upload.single('pdf'), async (req, res) => {
   try {
     const { id } = req.params;
     const file = req.file;
-    if (!file) return res.status(400).send("No file uploaded");
-    const sql = "UPDATE users SET pdf = ? WHERE id = ?";
-    db.query(sql, [file.buffer, id], (err, result) => {
-      if (err) return res.status(500).send(err);
-      res.send("File uploaded successfully!");
+    const { subject, message } = req.body;
+    if (!file) return res.status(400).jsom({ success: false, message: "No file uploaded" });
+    const sql = "UPDATE users SET pdf = ?,subject= ? ,message=?  WHERE id = ?";
+    db.query(sql, [file.buffer, subject, message, id], (err, result) => {
+      if (err) { console.log(err); return res.status(500).json({ success: false, message: "database problem" }) };
+      res.status(200).json({ success: true, message: "File uploaded successfully!" });
     });
   } catch (err) {
     res.status(500).json({ success: false, message: "server problem" })
